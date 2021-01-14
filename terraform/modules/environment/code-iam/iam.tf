@@ -133,39 +133,3 @@ resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_on
   role       = aws_iam_role.codepipeline.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
-
-# CloudWatch Event用
-data "aws_iam_policy_document" "events_assume_role" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["events.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role" "events" {
-  name               = "${var.pj}-CloudWatchEventsRole"
-  assume_role_policy = data.aws_iam_policy_document.events_assume_role.json
-}
-
-data "aws_iam_policy_document" "events_start_pipeline_execution" {
-  statement {
-    effect    = "Allow"
-    resources = ["*"]
-    actions = [
-      "codepipeline:StartPipelineExecution"
-    ]
-  }
-}
-
-resource "aws_iam_policy" "events_start_pipeline_execution" {
-  name   = "${var.pj}-CloudWatchEventsPolicy"
-  policy = data.aws_iam_policy_document.events_start_pipeline_execution.json
-}
-
-resource "aws_iam_role_policy_attachment" "events" {
-  role       = aws_iam_role.events.name
-  policy_arn = aws_iam_policy.events_start_pipeline_execution.arn
-}

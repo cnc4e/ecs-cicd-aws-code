@@ -43,7 +43,5 @@ module "preparation" {
   # module parameter
   ecr_repositories = [local.app_full]
 
-  s3_service_settings_bucket_name = local.app_full
-
   sg_name   = local.app_full
 }

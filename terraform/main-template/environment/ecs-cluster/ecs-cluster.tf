@@ -16,7 +16,7 @@ locals {
   }
 }
 
-module "gitlab-ecs-cicd-ecs-cluster" {
+module "ecs-cicd-ecs-cluster" {
   source = "../../../modules/environment/ecs-cluster"
 
   # common parameter
