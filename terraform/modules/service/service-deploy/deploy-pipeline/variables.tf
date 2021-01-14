@@ -78,6 +78,11 @@ variable "s3_artifact_store_name" {
   type        = string
 }
 
+variable "s3_build_cache_store_name" {
+  description = "codebuildが使用するビルドのキャッシュストアのバケット名"
+  type        = string
+}
+
 # code-pipeline.tf
 variable "codepipeline_ecr_repository_name" {
   description = "変更を検知してデプロイする対象のECRレポジトリ名"
