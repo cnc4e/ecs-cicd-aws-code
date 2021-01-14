@@ -120,6 +120,11 @@ module "deploy-pipeline" {
   tags     = local.tags
 
   # module parameter
+  # codebuild
+  codebuild_build_role_arn        = "arn:aws:iam::${data.aws_caller_identity.self.account_id}:role/${local.pj}-CodeBuildRole"
+  codebuild_build_log_group_name  = local.app_full
+  codebuild_build_log_stream_name = "${local.app_full}-build-log"
+
   # codedeploy
   codedeploy_deployment_group_name            = "${local.app_full}-deploy-group"
   codedeploy_service_role_arn                 = "arn:aws:iam::${data.aws_caller_identity.self.account_id}:role/${local.pj}-CodeDeployRole"
@@ -134,6 +139,7 @@ module "deploy-pipeline" {
   s3_service_settings_bucket_name = local.app_full
   s3_service_settings_bucket_arn  = "arn:aws:s3:::${local.app_full}"
   s3_artifact_store_name          = "${local.app_full}-artifact"
+  s3_build_cache_store_name       = "${local.app_full}-build-cache"
 
   # codepipeline
   codepipeline_ecr_repository_name = local.app_full

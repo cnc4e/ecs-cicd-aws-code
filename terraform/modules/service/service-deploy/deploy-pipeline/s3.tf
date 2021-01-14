@@ -12,6 +12,20 @@ resource "aws_s3_bucket" "artifact_store" {
 
 }
 
+# codebuildキャッシュ用S3
+resource "aws_s3_bucket" "build_cache_store" {
+  bucket        = var.s3_build_cache_store_name
+  acl           = "private"
+  force_destroy = true
+
+  tags = merge(
+    {
+      "Name" = var.s3_build_cache_store_name
+    },
+    var.tags
+  )
+}
+
 # after
 resource "aws_s3_bucket" "cloudtraile" {
   bucket        = "${var.app_full}-cloudtraile"

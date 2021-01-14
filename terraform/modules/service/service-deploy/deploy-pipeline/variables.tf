@@ -15,6 +15,22 @@ variable "tags" {
 }
 
 # module parameter
+# code-build.tf
+variable "codebuild_build_role_arn" {
+  description = "ビルドプロジェクトに与えるIAMロール"
+  type        = string
+}
+
+variable "codebuild_build_log_group_name" {
+  description = "ビルドプロジェクトのログを取得するCloudWatchのグループ名"
+  type        = string
+}
+
+variable "codebuild_build_log_stream_name" {
+  description = "ビルドプロジェクトのログを取得するCloudWatchのストリーム名"
+  type        = string
+}
+
 # code-deploy.tf
 variable "codedeploy_deployment_group_name" {
   description = "デプロイグループの名前"
