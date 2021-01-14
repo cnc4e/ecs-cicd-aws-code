@@ -1,5 +1,6 @@
 locals {
   setting_artifacts_name = "settings"
+  app_artifacts_name   = "app"
   image_artifacts_name   = "images"
 }
 
@@ -20,33 +21,52 @@ resource "aws_codepipeline" "this" {
 
   stage {
     name = "Source"
-
+    
     action {
       name             = "CodeDeploySettings"
       category         = "Source"
       owner            = "AWS"
-      provider         = "S3"
+      provider         = "CodeCommit"
       version          = "1"
       output_artifacts = [local.setting_artifacts_name]
       run_order        = 1
+
       configuration = {
-        S3Bucket             = var.s3_service_settings_bucket_name
-        S3ObjectKey          = "settings.zip"
-        PollForSourceChanges = false
+        RepositoryName = "${var.app_full}-ecs"
+        BranchName = "master"
       }
     }
-
+    
     action {
-      name             = "ECR"
+      name             = "App"
       category         = "Source"
       owner            = "AWS"
-      provider         = "ECR"
+      provider         = "CodeCommit"
       version          = "1"
-      output_artifacts = [local.image_artifacts_name]
-      run_order        = 2
+      output_artifacts = [local.app_artifacts_name]
+      run_order        = 1
+
       configuration = {
-        RepositoryName = var.codepipeline_ecr_repository_name
-        ImageTag       = "latest"
+        RepositoryName = "${var.app_full}-app"
+        BranchName = "master"
+      }
+    }
+  }
+  
+  stage {
+    name = "Build"
+
+    action {
+      name = "Build"
+      category = "Build"
+      owner = "AWS"
+      provider = "CodeBuild"
+      version = "1"
+      input_artifacts = [local.app_artifacts_name]
+      output_artifacts = [local.image_artifacts_name]
+      
+      configuration = {
+        ProjectName = "${var.app_full}-build"
       }
     }
   }
