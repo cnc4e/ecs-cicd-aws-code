@@ -211,7 +211,7 @@ export SGID=<sg_id>
 |ECSのデプロイ設定|CodeCommit|`cicd-dev-test-app-ecs`レポジトリ|
 
 
-- `app`レポジトリにはアプリケーションのソースとDockerfileを配置するため以下のコマンドを実行します。その際`buildspec.yml`というファイルを共に配置します。これはパイプライン中のCodeBuildの動作を指示するファイルです。今回使用する`buildspec.yml`では、Dockerコンテナのビルドとビルド後イメージのECRへの配置を指示しています。ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
+- `cicd-dev-test-app-app`レポジトリにはアプリケーションのソースとDockerfileを配置するため以下のコマンドを実行します。その際`buildspec.yml`というファイルを共に配置します。これはパイプライン中のCodeBuildの動作を指示するファイルです。今回使用する`buildspec.yml`では、Dockerコンテナのビルドとビルド後イメージのECRへの配置を指示しています。ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
 
   ``` sh
   cd $CLONEDIR
@@ -224,7 +224,7 @@ export SGID=<sg_id>
   git push
   ```
 
-- `ecs`レポジトリにはCodeDeployによるECS Serviceデプロイをするための設定ファイルを配置するため以下のコマンドを実行します。`app`レポジトリ同様、ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。（なお、`app`レポジトリで生成したのと同じ認証情報を使用できます。）[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
+- `cicd-dev-test-app-ecs`レポジトリにはCodeDeployによるECS Serviceデプロイをするための設定ファイルを配置するため以下のコマンドを実行します。`cicd-dev-test-app-app`レポジトリ同様、ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。（なお、`cicd-dev-test-app-app`レポジトリで生成したのと同じ認証情報を使用できます。）[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
 
   ``` sh
   cd $CLONEDIR
@@ -280,10 +280,10 @@ test-app です。
 
 アプリケーションを更新して変更をCodeCommitにプッシュします。CICDにより自動で新しいアプリケーションがデプロイされることを確認します。
 
-`app`レポジトリに移動します。
+`cicd-dev-test-app-app`レポジトリに移動します。
 
 ``` sh
-cd $CLONEDIR/app
+cd $CLONEDIR/cicd-dev-test-app-app
 ```
 
 `index.js`を修正します。以下の例では`これはCICDでデプロイされたアプリケーション`という文章を`ソースレポジトリが更新されると自動でデプロイされるアプリケーション`に置換しています。
@@ -314,10 +314,10 @@ git push
 
 ECSの設定を更新して変更をCodeCommitにプッシュします。CICDにより自動で新しいアプリケーションがデプロイされることを確認します。
 
-`ecs`レポジトリに移動します。
+`cicd-dev-test-app-ecs`レポジトリに移動します。
 
 ``` sh
-cd $CLONEDIR/ecs
+cd $CLONEDIR/cicd-dev-test-app-ecs
 ```
 
 `taskdef.json`を修正します。以下の例ではコンテナに付与する環境変数`appname`の値を`$APP-NMAE`->`cicd test update`に置換しています。
@@ -401,6 +401,6 @@ terraform destroy
 ``` sh
 rm -rf $CLONEDIR/ecs-cicd-aws-code/terraform/$PJNAME
 rm -rf $CLONEDIR/ecs-cicd-aws-code/$APPNAME
-rm -rf $CLONEDIR/app
-rm -rf $CLONEDIR/ecs
+rm -rf $CLONEDIR/cicd-dev-test-app-app
+rm -rf $CLONEDIR/cicd-dev-test-app-ecs
 ```
