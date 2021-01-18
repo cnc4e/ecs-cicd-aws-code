@@ -5,6 +5,7 @@
     - [ECSクラスタ](#ecsクラスタ)
   - [サービス構築](#サービス構築)
     - [事前準備](#事前準備)
+    - [CodeCommitへのソース配置](#codecommitへのソース配置)
     - [サービスデプロイ](#サービスデプロイ)
   - [サービスの更新](#サービスの更新)
     - [アプリケーションの更新](#アプリケーションの更新)
@@ -190,6 +191,7 @@ terraform apply
 ```
 
 outputに出力されるsg_idはService用に作成したセキュリティーグループのIDです。この後の手順で使用します。
+また、実行後に出力される`repository_app`、`repository_ecs`はCodeCommitレポジトリのクローンURLです。
 
 ``` sh
 export SGID=<sg_id>
@@ -199,32 +201,9 @@ export SGID=<sg_id>
 
 ![](./images/use-pre.svg)
 
+### CodeCommitへのソース配置
 
-### サービスデプロイ
-
-サービスデプロイモジュールのディレクトリへ移動します。
-
-``` sh
-cd $CLONEDIR/ecs-cicd-aws-code/terraform/$PJNAME/$APPNAME/service-deploy
-```
-
-以下コマンドでリソースを作成します。
-
-``` sh
-terraform init
-terraform apply
-> yes
-```
-
-実行後に出力される`repository_app`、`repository_ecs`はCodeCommitレポジトリのクローンURLです。
-また、`dns_name`はLBのDNS名です。後ほど使用するのでコピーして保管しておきます。
-
-**作成後のイメージ**
-
-![](./images/use-service.svg)
-
-作成されたパイプラインは初回実行に失敗しています。CodeCommitレポジトリからのソース取得ができていないためです。そのためこの後の手順でCodeCommitレポジトリにソースを配置し、パイプラインを動作させます。  
-現在AWS側にはアプリケーションのコンテナイメージとECSのデプロイ設定を配置するCodeCommitのレポジトリが用意できています。例で作成した`cicd-dev`プロジェクトの`test-app`アプリケーションの場合、それぞれ以下の通りです。  
+現在AWSにはアプリケーションのコンテナイメージとECSのデプロイ設定を配置するCodeCommitのレポジトリが用意できています。例で作成した`cicd-dev`プロジェクトの`test-app`アプリケーションの場合、それぞれ以下の通りです。  
 
 |対象データ|配置サービス|配置場所|
 |-|-|-|
@@ -245,7 +224,7 @@ terraform apply
   git push
   ```
 
-- `ecs`レポジトリにはCodeDeployによるECS Serviceデプロイをするための設定ファイルを配置するため以下のコマンドを実行します。`app`レポジトリ同様、ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
+- `ecs`レポジトリにはCodeDeployによるECS Serviceデプロイをするための設定ファイルを配置するため以下のコマンドを実行します。`app`レポジトリ同様、ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。（なお、`app`レポジトリで生成したのと同じ認証情報を使用できます。）[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
 
   ``` sh
   cd $CLONEDIR
@@ -258,8 +237,30 @@ terraform apply
   git push
   ```
 
+配置したソースは
 
-数分してから先ほどのLBのDNS名にWEBブラウザでアクセスします。すべて上手く行けば以下のようなメッセージの画面が表示されます。なお、デプロイはterraform完了からさらに数分の時間を要します。デプロイ失敗なのか待ちなのか確認するには、マネジメントコンソールでcodepipelineの画面を開き現在の状況を追ってみるとよいでしょう。Deployが進行中であればまだしばらく待ってください。
+**作成後のイメージ**
+
+![](./images/use-gitpush.svg)
+
+### サービスデプロイ
+
+サービスデプロイモジュールのディレクトリへ移動します。
+
+``` sh
+cd $CLONEDIR/ecs-cicd-aws-code/terraform/$PJNAME/$APPNAME/service-deploy
+```
+
+以下コマンドでリソースを作成します。
+
+``` sh
+terraform init
+terraform apply
+> yes
+```
+
+
+実行後に出力されるdns_nameはLBのDNS名です。数分してから先ほどのLBのDNS名にWEBブラウザでアクセスします。すべて上手く行けば以下のようなメッセージの画面が表示されます。なお、デプロイはterraform完了からさらに数分の時間を要します。デプロイ失敗なのか待ちなのか確認するには、マネジメントコンソールでcodepipelineの画面を開き現在の状況を追ってみるとよいでしょう。Deployが進行中であればまだしばらく待ってください。
 
 **出力メッセージ**
 
@@ -271,6 +272,7 @@ test-app です。
 **作成後のイメージ**
 
 ![](./images/use-service.svg)
+
 
 ## サービスの更新
 
