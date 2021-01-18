@@ -211,6 +211,37 @@ export SGID=<sg_id>
 |アプリケーションのコンテナイメージ|CodeCommit|`cicd-dev-test-app-app`レポジトリ|
 |ECSのデプロイ設定|CodeCommit|`cicd-dev-test-app-ecs`レポジトリ|
 
+それぞれサンプルとなるレポジトリを`sample-repos`ディレクトリ配下に用意しています。これらのサンプルを参考に以下の様に設定を行います。なお、サンプルディレクトリ配下のファイルを使う場合、以下のように置換を行ってください。
+
+**Linuxの場合**
+
+``` sh
+cd $CLONEDIR/ecs-cicd-aws-code
+cp -r sample-repos $APPNAME
+cd $APPNAME
+find ./ -type f -exec grep -l 'REGION' {} \; | xargs sed -i -e 's:REGION:<自身が使用しているリージョン>:g'
+find ./ -type f -exec grep -l 'AWS-ID' {} \; | xargs sed -i -e 's:AWS-ID:<自身が使用しているAWSアカウントのID>:g'
+find ./ -type f -exec grep -l 'PJ-NAME' {} \; | xargs sed -i -e 's:PJ-NAME:'$PJNAME':g'
+find ./ -type f -exec grep -l 'APP-NAME' {} \; | xargs sed -i -e 's:APP-NAME:'$APPNAME':g'
+find ./ -type f -exec grep -l 'SG-ID' {} \; | xargs sed -i -e 's:SG-ID:'$SGID':g'
+find ./ -type f -exec grep -l 'PRIVATE-SUBNET-1' {} \; | xargs sed -i -e 's:PRIVATE-SUBNET-1:'$PRIVATESUBNET1':g'
+find ./ -type f -exec grep -l 'PRIVATE-SUBNET-2' {} \; | xargs sed -i -e 's:PRIVATE-SUBNET-2:'$PRIVATESUBNET2':g'
+```
+
+**macの場合**
+
+``` sh
+cd $CLONEDIR/ecs-cicd-aws-code
+cp -r sample-repos $APPNAME
+cd $APPNAME
+find ./ -type f -exec grep -l 'REGION' {} \; | xargs sed -i "" -e 's:REGION:'$REGION':g'
+find ./ -type f -exec grep -l 'AWS-ID' {} \; | xargs sed -i "" -e 's:AWS-ID:<自身が使用しているAWSアカウントのID>:g'
+find ./ -type f -exec grep -l 'PJ-NAME' {} \; | xargs sed -i "" -e 's:PJ-NAME:'$PJNAME':g'
+find ./ -type f -exec grep -l 'APP-NAME' {} \; | xargs sed -i "" -e 's:APP-NAME:'$APPNAME':g'
+find ./ -type f -exec grep -l 'SG-ID' {} \; | xargs sed -i "" -e 's:SG-ID:'$SGID':g'
+find ./ -type f -exec grep -l 'PRIVATE-SUBNET-1' {} \; | xargs sed -i "" -e 's:PRIVATE-SUBNET-1:'$PRIVATESUBNET1':g'
+find ./ -type f -exec grep -l 'PRIVATE-SUBNET-2' {} \; | xargs sed -i "" -e 's:PRIVATE-SUBNET-2:'$PRIVATESUBNET2':g'
+```
 
 - `cicd-dev-test-app-app`レポジトリにはアプリケーションのソースとDockerfileを配置するため以下のコマンドを実行します。その際`buildspec.yml`というファイルを共に配置します。これはパイプライン中のCodeBuildの動作を指示するファイルです。今回使用する`buildspec.yml`では、Dockerコンテナのビルドとビルド後イメージのECRへの配置を指示しています。ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
 

@@ -1,4 +1,9 @@
 # common parameter
+variable "app_full" {
+  description = "リソース群に付与する名前の接頭語。プロジェクト名-アプリケーション名。"
+  type        = string
+}
+
 variable "vpc_id" {
   description = "リソース群が属するVPCのID"
   type        = string
