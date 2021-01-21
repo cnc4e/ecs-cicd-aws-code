@@ -433,6 +433,6 @@ terraform destroy
 ``` sh
 rm -rf $CLONEDIR/ecs-cicd-aws-code/terraform/$PJNAME
 rm -rf $CLONEDIR/ecs-cicd-aws-code/$APPNAME
-rm -rf $CLONEDIR/cicd-dev-test-app-app
-rm -rf $CLONEDIR/cicd-dev-test-app-ecs
+rm -rf $CLONEDIR/$PJNAME-$APPNAME-app
+rm -rf $CLONEDIR/$PJNAME-$APPNAME-ecs
 ```
