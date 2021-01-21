@@ -37,8 +37,9 @@ module "preparation" {
   source = "../../../modules/service/preparation"
 
   # common parameter
-  tags   = local.tags
-  vpc_id = local.vpc_id
+  tags     = local.tags
+  vpc_id   = local.vpc_id
+  app_full = local.app_full
 
   # module parameter
   ecr_repositories = [local.app_full]
