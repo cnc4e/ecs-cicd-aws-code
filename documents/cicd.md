@@ -6,7 +6,7 @@
 
 # CICDフロー説明
 
-本レポジトリで構成するCICDについて解説します。全体の流れは以下の通りです。CodePipelineでサービスごとに1つのパイプラインを構成し、その中でCodeBuildでソースをビルドするいわゆる`CI`の部分、CodeDeployでデプロイするいわゆる`CD`の部分に分かれます。
+本レポジトリで構成するCICDについて解説します。全体の流れは以下の通りです。CodeCommitにアプリケーションソースとECSデプロイ設定を配置する2つのレポジトリを用意します。CodePipelineで1つのパイプラインを構成し、その中にCodeBuildでソースをビルドするいわゆる`CI`の部分、CodeDeployでデプロイするいわゆる`CD`の部分を構成します。
 
 ![](./images/cicd.svg)
 
@@ -20,10 +20,12 @@ CodePipelineは3つのステージで構成します。`Source`ステージと`B
 - `Deploy`ステージ
   - CodeDeployを実行し、ECSサービスのタスクをBlue/Greenデプロイで更新します。いわゆる`CD`の部分です
 
-Sourceステージ・Buildステージは`CI`の部分です。
+Sourceステージ・Buildステージは`CI`の部分です。  
+
 ![](./images/cicd-ci.svg)  
 
-Deployステージは`CD`の部分です。
+Deployステージは`CD`の部分です。  
+
 ![](./images/cicd-cd.svg)
 
 ### Sourceステージ
