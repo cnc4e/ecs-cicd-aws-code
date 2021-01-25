@@ -20,13 +20,12 @@ CodePipelineは3つのステージで構成します。`Source`ステージと`B
 - `Deploy`ステージ
   - CodeDeployを実行し、ECSサービスのタスクをBlue/Greenデプロイで更新します。いわゆる`CD`の部分です
 
+![](./images/cicd-stage.svg)  
+
 Sourceステージ・Buildステージは`CI`の部分です。  
-
-![](./images/cicd-ci.svg)  
-
 Deployステージは`CD`の部分です。  
 
-![](./images/cicd-cd.svg)
+![](./images/cicd-cicd.svg)
 
 ### Sourceステージ
 
