@@ -11,11 +11,12 @@ phases:
       docker: 18
   pre_build:
     commands:
-      - aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin $ECR_HOST
+      - if [ $(date -d $APP_RELEASE_DATE +%s) -gt $(date -d $ECS_RELEASE_DATE +%s) ];then export IS_APP_TRIGGERED=true;else export IS_APP_TRIGGERED=false;fi
+      - if "${IS_APP_TRIGGERED}" ;then aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin $ECR_HOST;fi
   build:
     commands:
-      - docker build -t $ECR_HOST/$APP_NAME:latest .
-      - docker push $ECR_HOST/$APP_NAME:latest
+      - if "${IS_APP_TRIGGERED}" ;then docker build -t $ECR_HOST/$APP_NAME:latest .;fi
+      - if "${IS_APP_TRIGGERED}" ;then docker push $ECR_HOST/$APP_NAME:latest;fi
   post_build:
     commands:
       - printf '{"Version":"1.0","ImageURI":"%s"}' $ECR_HOST/$APP_NAME:latest > imageDetail.json

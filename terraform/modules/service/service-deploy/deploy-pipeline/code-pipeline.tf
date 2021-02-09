@@ -30,6 +30,7 @@ resource "aws_codepipeline" "this" {
       version          = "1"
       output_artifacts = [local.setting_artifacts_name]
       run_order        = 1
+      namespace        = "SourceEcs"
 
       configuration = {
         RepositoryName = "${var.app_full}-ecs"
@@ -45,6 +46,7 @@ resource "aws_codepipeline" "this" {
       version          = "1"
       output_artifacts = [local.app_artifacts_name]
       run_order        = 1
+      namespace        = "SourceApp"
 
       configuration = {
         RepositoryName = "${var.app_full}-app"
@@ -67,6 +69,7 @@ resource "aws_codepipeline" "this" {
       
       configuration = {
         ProjectName = "${var.app_full}-build"
+        EnvironmentVariables = "[{\"name\":\"APP_RELEASE_DATE\",\"value\":\"#{SourceApp.AuthorDate}\",\"type\":\"PLAINTEXT\"},{\"name\":\"ECS_RELEASE_DATE\",\"value\":\"#{SourceEcs.AuthorDate}\",\"type\":\"PLAINTEXT\"}]"
       }
     }
   }

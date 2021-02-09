@@ -204,12 +204,12 @@ export SGID=<sg_id>
 
 ### CodeCommitへのソース配置
 
-現在AWSにはアプリケーションのコンテナイメージとECSのデプロイ設定を配置するCodeCommitのレポジトリが用意できています。例で作成した`cicd-dev`プロジェクトの`test-app`アプリケーションの場合、それぞれ以下の通りです。  
+現在AWSにはECSのデプロイ設定とアプリケーションのコンテナイメージを配置するCodeCommitのレポジトリが用意できています。例で作成した`cicd-dev`プロジェクトの`test-app`アプリケーションの場合、それぞれ以下の通りです。  
 
 |対象データ|配置サービス|配置場所|
 |-|-|-|
-|アプリケーションのコンテナイメージ|CodeCommit|`cicd-dev-test-app-app`レポジトリ|
 |ECSのデプロイ設定|CodeCommit|`cicd-dev-test-app-ecs`レポジトリ|
+|アプリケーションのコンテナイメージ|CodeCommit|`cicd-dev-test-app-app`レポジトリ|
 
 それぞれサンプルとなるレポジトリを`sample-repos`ディレクトリ配下に用意しています。これらのサンプルを参考に以下の様に設定を行います。なお、サンプルディレクトリ配下のファイルを使う場合、以下のように置換を行ってください。
 
@@ -243,19 +243,6 @@ find ./ -type f -exec grep -l 'PRIVATE-SUBNET-1' {} \; | xargs sed -i "" -e 's:P
 find ./ -type f -exec grep -l 'PRIVATE-SUBNET-2' {} \; | xargs sed -i "" -e 's:PRIVATE-SUBNET-2:'$PRIVATESUBNET2':g'
 ```
 
-- `cicd-dev-test-app-app`レポジトリにはアプリケーションのソースとDockerfileを配置するため以下のコマンドを実行します。その際`buildspec.yml`というファイルを共に配置します。これはパイプライン中のCodeBuildの動作を指示するファイルです。今回使用する`buildspec.yml`では、Dockerコンテナのビルドとビルド後イメージのECRへの配置を指示しています。ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
-
-  ``` sh
-  cd $CLONEDIR
-  git clone <appレポジトリのクローンURL>
-  # ユーザ名/パスワードは先ほど生成されたGit認証情報
-  cd cicd-dev-test-app-app
-  cp -r $CLONEDIR/ecs-cicd-aws-code/$APPNAME/app/* ./
-  git add .
-  git commit -m "init"
-  git push
-  ```
-
 - `cicd-dev-test-app-ecs`レポジトリにはCodeDeployによるECS Serviceデプロイをするための設定ファイルを配置するため以下のコマンドを実行します。`cicd-dev-test-app-app`レポジトリ同様、ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。（なお、`cicd-dev-test-app-app`レポジトリで生成したのと同じ認証情報を使用できます。）[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
 
   ``` sh
@@ -264,6 +251,19 @@ find ./ -type f -exec grep -l 'PRIVATE-SUBNET-2' {} \; | xargs sed -i "" -e 's:P
   # ユーザ名/パスワードは先ほど生成されたGit認証情報
   cd cicd-dev-test-app-ecs
   cp -r $CLONEDIR/ecs-cicd-aws-code/$APPNAME/ecs/* ./
+  git add .
+  git commit -m "init"
+  git push
+  ```
+
+- `cicd-dev-test-app-app`レポジトリにはアプリケーションのソースとDockerfileを配置するため以下のコマンドを実行します。その際`buildspec.yml`というファイルを共に配置します。これはパイプライン中のCodeBuildの動作を指示するファイルです。今回使用する`buildspec.yml`では、Dockerコンテナのビルドとビルド後イメージのECRへの配置を指示しています。ファイルをCodeCommitレポジトリに配置する際は、IAMユーザ用のGit認証情報を作成し、生成されたユーザ名/パスワードを使用してください。[参考](https://docs.aws.amazon.com/ja_jp/codecommit/latest/userguide/setting-up-gc.html)
+
+  ``` sh
+  cd $CLONEDIR
+  git clone <appレポジトリのクローンURL>
+  # ユーザ名/パスワードは先ほど生成されたGit認証情報
+  cd cicd-dev-test-app-app
+  cp -r $CLONEDIR/ecs-cicd-aws-code/$APPNAME/app/* ./
   git add .
   git commit -m "init"
   git push
